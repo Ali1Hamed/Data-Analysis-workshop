@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analytics Flashcards</title>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Inter:wght@400;700&display=swap');
+
+:root {
+  --bg-color: #0b0f19;
+  --text-color: #e2e8f0;
+  --primary: #3b82f6;
+  --secondary: #8b5cf6;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --card-bg: rgba(30, 41, 59, 0.7);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cairo', 'Inter', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  overflow: hidden; /* Prevent scrolling since it's flashcards */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Background blob animations */
+.bg-blobs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+.blob {
+  position: absolute;
+  filter: blur(80px);
+  opacity: 0.6;
+  animation: float 20s infinite ease-in-out alternate;
+}
+
+.blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary) 0%, transparent 70%); }
+.blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--secondary) 0%, transparent 70%); animation-delay: -5s; }
+
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(5%, 10%) scale(1.1); }
+}
+
+/* Presentation Container */
+.presentation {
+  width: 100%;
+  max-width: 800px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Flashcards Deck */
+.flashcards-deck {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  perspective: 1000px;
+}
+
+.flashcard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(50px) scale(0.95);
+  transition: all 0.5s ease-in-out;
+}
+
+.flashcard.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0) scale(1);
+  z-index: 10;
+}
+
+.flashcard.prev {
+  transform: translateX(-50px) scale(0.95);
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.flashcard.is-flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front, .flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+  background: rgba(15, 23, 42, 0.8);
+  border-color: var(--primary);
+}
+
+/* Typography */
+.icon-large {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.highlight {
+  font-size: 2.5rem;
+  margin: 2rem 0;
+  color: var(--primary);
+  background: none;
+  -webkit-text-fill-color: initial;
+}
+
+h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+p {
+  font-size: 1.3rem;
+  color: #cbd5e1;
+  line-height: 1.8;
+}
+
+.hint {
+  margin-top: 2rem;
+  font-size: 1rem;
+  color: var(--secondary);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Lists and Steps */
+.points-list {
+  text-align: right;
+  list-style: none;
+  width: 100%;
+  max-width: 600px;
+}
+
+.points-list li {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  border-right: 4px solid var(--primary);
+}
+
+.journey-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: rgba(255,255,255,0.05);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+}
+
+.step span {
+  background: var(--primary);
+  color: white;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: var(--glass-bg);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+}
+
+.btn-nav {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.btn-nav:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.counter {
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Demo Button */
+.btn-demo {
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: transform 0.2s;
+}
+
+.btn-demo:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .flashcards-deck { height: 600px; }
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 1.8rem; }
+  .flashcard-front, .flashcard-back { padding: 1.5rem; }
+}
+    </style>
+</head>
+<body>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="presentation">
+        <div class="flashcards-deck" id="deck">
+            
+            <!-- Card 1: Hero -->
+            <div class="flashcard active">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">📊</div>
+                        <h1>Data Analysis Workshop</h1>
+                        <p class="hint">اضغط للقلب 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <h2>تحويل البيانات إلى قرارات ذكية</h2>
+                        <p>كيف نستفيد من لغة الأرقام في قطاع بناء القدرات والمسابقات (Capacity Building & Competitions)؟</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: The Why -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">❓</div>
+                        <h2>ما هو تحليل البيانات؟</h2>
+                        <p class="hint">اضغط للإجابة 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <ul class="points-list">
+                            <li><strong>📊 تجميع الحقائق:</strong> فهم الوضع بالأرقام وليس بالتوقعات.</li>
+                            <li><strong>🔍 اكتشاف الأنماط:</strong> معرفة من أين يأتي أفضل المشاركين.</li>
+                            <li><strong>💡 اتخاذ القرارات:</strong> توجيه الميزانية للمكان الصحيح.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Impact -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">🌍</div>
+                        <h2>أمثلة من أرض الواقع</h2>
+                        <p class="hint">اضغط لترى التأثير 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <ul class="points-list">
+                            <li><strong>🎬 Netflix:</strong> استخدام البيانات لمعرفة تفضيلات المشاهدين وإنتاج مسلسلات ناجحة.</li>
+                            <li><strong>🏆 برامجنا:</strong> اكتشاف أن 70% من المشاريع الفائزة تأتي من جامعة محددة لتركيز التسويق عليها.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Journey -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">🛤️</div>
+                        <h2>رحلة البيانات (Data Journey)</h2>
+                        <p class="hint">اضغط لمعرفة الخطوات 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="journey-steps">
+                            <div class="step"><span>1</span> 📝 Collection (التجميع)</div>
+                            <div class="step"><span>2</span> 🧹 Cleaning (التنظيف)</div>
+                            <div class="step"><span>3</span> 📈 Visualization (التصوير)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5 (Added): Data vs Intuition -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">🤔</div>
+                        <h2>البيانات مقابل الحدس (الخبرة)</h2>
+                        <p class="hint">اضغط لتعرف الفرق 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <ul class="points-list">
+                            <li><strong>الحدس (Gut Feeling):</strong> "أعتقد أن الشباب يفضلون المسار التقني." (قد يصيب أو يخطئ)</li>
+                            <li><strong>البيانات (Data):</strong> "الأرقام تقول إن 60% سجلوا في مسار ريادة الأعمال." (حقيقة ثابتة)</li>
+                            <li><strong>الخلاصة:</strong> الخبرة مهمة، لكن البيانات تؤكدها وتوجهها!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 (Added): Data Sources -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">📂</div>
+                        <h2>من أين نحصل على البيانات؟</h2>
+                        <p class="hint">اضغط لاكتشاف المصادر 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <ul class="points-list">
+                            <li><strong>📝 استمارات التسجيل:</strong> (Google Forms, Typeform).</li>
+                            <li><strong>📊 منصات التقييم:</strong> درجات لجان التحكيم وتقييم المتدربين.</li>
+                            <li><strong>💬 التغذية الراجعة (Feedback):</strong> استبيانات ما بعد الورش والمسابقات.</li>
+                            <li><strong>📱 السوشيال ميديا:</strong> تفاعل الجمهور مع الإعلانات.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 7 (Added): KPIs -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">🎯</div>
+                        <h2>أهم المؤشرات (KPIs) في مسابقاتنا</h2>
+                        <p class="hint">اضغط لترى الأمثلة 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <ul class="points-list">
+                            <li><strong>معدل الإكمال (Completion Rate):</strong> كم شخص بدأ التقديم وأكمله للنهاية؟</li>
+                            <li><strong>التنوع (Diversity):</strong> التوزيع الجغرافي والنوعي (بنين/بنات) للمشاركين.</li>
+                            <li><strong>الجودة (Quality):</strong> متوسط درجات المشاريع المقبولة.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 8 (Added): Common Mistakes -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">⚠️</div>
+                        <h2>أخطاء شائعة في التعامل مع البيانات</h2>
+                        <p class="hint">اضغط للحذر منها 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <ul class="points-list">
+                            <li><strong>الجمع بدون هدف:</strong> تجميع أسئلة في الفورم لا نستخدم إجاباتها.</li>
+                            <li><strong>إهمال التنظيف:</strong> ترك بيانات مكررة أو خاطئة تفسد النتائج.</li>
+                            <li><strong>التحيز (Bias):</strong> البحث عن البيانات التي تثبت رأيك فقط وتجاهل الباقي!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 9: Demo -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">🪄</div>
+                        <h2>سحر لوحات التحكم (Live Demo)</h2>
+                        <p class="hint">اضغط للبدء 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <h2>تطبيق عملي: Looker Studio</h2>
+                        <p>الإجابة على أصعب الأسئلة في ثوانٍ باستخدام البيانات الحقيقية لمسابقاتنا.</p>
+                        <button class="btn-demo" id="demoBtn">🚀 إطلاق لوحة التحكم</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Conclusion -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="icon-large">🧠</div>
+                        <h2>The Mindset (الخلاصة)</h2>
+                        <p class="hint">اضغط لترسيخ القاعدة 👆</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <p>ليس المطلوب أن تصبح مبرمجاً، بل أن تسأل نفسك دائماً:</p>
+                        <h1 class="highlight">"What does the data say?"</h1>
+                        <p>أسئلة ومناقشة (Q&A)</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn-nav" id="prevBtn">السابق ◀</button>
+            <div class="counter" id="counter">1 / 10</div>
+            <button class="btn-nav" id="nextBtn">▶ التالي</button>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.flashcard');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const counter = document.getElementById('counter');
+    const demoBtn = document.getElementById('demoBtn');
+
+    let currentIndex = 0;
+
+    function updateDeck() {
+        cards.forEach((card, index) => {
+            // Remove all classes
+            card.classList.remove('active', 'prev');
+            
+            if (index === currentIndex) {
+                card.classList.add('active');
+            } else if (index < currentIndex) {
+                card.classList.add('prev');
+            }
+            
+            // Unflip cards when navigating away
+            if (index !== currentIndex) {
+                card.classList.remove('is-flipped');
+            }
+        });
+
+        // Update Counter
+        counter.textContent = `${currentIndex + 1} / ${cards.length}`;
+
+        // Disable/Enable buttons
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === cards.length - 1;
+    }
+
+    // Next / Prev button event listeners
+    nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentIndex < cards.length - 1) {
+            currentIndex++;
+            updateDeck();
+        }
+    });
+
+    prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateDeck();
+        }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && document.dir === 'rtl') {
+            // Next for rtl
+            if (currentIndex < cards.length - 1) {
+                currentIndex++;
+                updateDeck();
+            }
+        } else if (e.key === 'ArrowRight' && document.dir === 'rtl') {
+            // Prev for rtl
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateDeck();
+            }
+        }
+        
+        // Support spacebar for flipping
+        if (e.key === ' ' || e.key === 'Spacebar') {
+            cards[currentIndex].classList.toggle('is-flipped');
+        }
+    });
+
+    // Flip card on click
+    cards.forEach(card => {
+        const inner = card.querySelector('.flashcard-inner');
+        inner.addEventListener('click', () => {
+            card.classList.toggle('is-flipped');
+        });
+    });
+
+    // Demo Button
+    if(demoBtn) {
+        demoBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // prevent card flip
+            alert('فتح الموود العملي: Looker Studio!');
+        });
+    }
+
+    // Initialize
+    updateDeck();
+});
+    </script>
+</body>
+</html>
