@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Analytics Flashcards</title>
+    <title>Data Analytics Workshop - Interactive</title>
     <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Inter:wght@400;700&display=swap');
 
@@ -14,7 +14,8 @@
   --secondary: #8b5cf6;
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
-  --card-bg: rgba(30, 41, 59, 0.7);
+  --card-bg: rgba(30, 41, 59, 0.85);
+  --success: #22c55e;
 }
 
 * {
@@ -27,7 +28,7 @@ body {
   font-family: 'Cairo', 'Inter', sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
-  overflow: hidden; /* Prevent scrolling since it's flashcards */
+  overflow: hidden; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,7 +63,7 @@ body {
 /* Presentation Container */
 .presentation {
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -70,15 +71,14 @@ body {
   gap: 2rem;
 }
 
-/* Flashcards Deck */
-.flashcards-deck {
+/* Slides Deck */
+.slides-deck {
   position: relative;
   width: 100%;
-  height: 500px;
-  perspective: 1000px;
+  height: 550px;
 }
 
-.flashcard {
+.slide-card {
   position: absolute;
   top: 0;
   left: 0;
@@ -87,40 +87,7 @@ body {
   opacity: 0;
   pointer-events: none;
   transform: translateX(50px) scale(0.95);
-  transition: all 0.5s ease-in-out;
-}
-
-.flashcard.active {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(0) scale(1);
-  z-index: 10;
-}
-
-.flashcard.prev {
-  transform: translateX(-50px) scale(0.95);
-}
-
-.flashcard-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transform-style: preserve-3d;
-  cursor: pointer;
-}
-
-.flashcard.is-flipped .flashcard-inner {
-  transform: rotateY(180deg);
-}
-
-.flashcard-front, .flashcard-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -128,26 +95,36 @@ body {
   padding: 3rem;
   background: var(--card-bg);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: 24px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  overflow-y: auto;
 }
 
-.flashcard-back {
-  transform: rotateY(180deg);
-  background: rgba(15, 23, 42, 0.8);
-  border-color: var(--primary);
+.slide-card::-webkit-scrollbar { width: 8px; }
+.slide-card::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 4px; }
+.slide-card::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+.slide-card.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0) scale(1);
+  z-index: 10;
+}
+
+.slide-card.prev {
+  transform: translateX(-50px) scale(0.95);
 }
 
 /* Typography */
 .icon-large {
-  font-size: 5rem;
-  margin-bottom: 1.5rem;
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
 }
 
 h1 {
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: 900;
   margin-bottom: 1rem;
   background: linear-gradient(to right, var(--primary), var(--secondary));
@@ -155,50 +132,43 @@ h1 {
   -webkit-text-fill-color: transparent;
 }
 
-.highlight {
-  font-size: 2.5rem;
-  margin: 2rem 0;
-  color: var(--primary);
-  background: none;
-  -webkit-text-fill-color: initial;
-}
-
 h2 {
   font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
   color: #fff;
+  border-bottom: 2px solid var(--glass-border);
+  padding-bottom: 0.5rem;
 }
 
 p {
   font-size: 1.3rem;
   color: #cbd5e1;
   line-height: 1.8;
+  margin-bottom: 1rem;
 }
 
 .hint {
-  margin-top: 2rem;
   font-size: 1rem;
   color: var(--secondary);
   animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
+@keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Lists and Steps */
 .points-list {
   text-align: right;
   list-style: none;
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .points-list li {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
   padding: 1rem;
   background: rgba(255,255,255,0.05);
   border-radius: 12px;
@@ -210,6 +180,8 @@ p {
   flex-direction: column;
   gap: 1rem;
   width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .step {
@@ -226,13 +198,98 @@ p {
 .step span {
   background: var(--primary);
   color: white;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  flex-shrink: 0;
 }
+
+/* Staggered Animations Feature */
+.step-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.step-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Interactive Glossary */
+.glossary-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.glossary-term {
+  background: rgba(255,255,255,0.1);
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  border: 1px solid var(--glass-border);
+  transition: all 0.3s;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+.glossary-term:hover, .glossary-term.active-term {
+  background: var(--primary);
+  transform: scale(1.05);
+}
+.glossary-def {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(0,0,0,0.4);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  font-size: 1.2rem;
+  border-right: 4px solid var(--secondary);
+  display: none;
+}
+.glossary-def.show { display: block; animation: fadeIn 0.4s; }
+
+/* Interactive Chart Quiz */
+.chart-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3rem;
+  height: 200px;
+  margin-top: 1rem;
+  width: 100%;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+  padding-bottom: 10px;
+}
+.chart-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.chart-bar {
+  width: 60px;
+  height: 0%; 
+  background: linear-gradient(to top, var(--primary), var(--secondary));
+  border-radius: 8px 8px 0 0;
+  transition: height 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+.chart-val {
+  position: absolute;
+  top: -30px;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 1s 1s; /* delay so it shows after growing */
+}
+.chart-bar.grown .chart-val { opacity: 1; }
+.chart-label { font-weight: bold; font-size: 1.2rem; }
 
 /* Controls */
 .controls {
@@ -246,7 +303,7 @@ p {
   border: 1px solid var(--glass-border);
 }
 
-.btn-nav {
+.btn-nav, .btn-action {
   background: none;
   border: none;
   color: white;
@@ -256,48 +313,28 @@ p {
   padding: 0.5rem 1rem;
   border-radius: 8px;
   transition: background 0.2s;
-}
-
-.btn-nav:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.btn-nav:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.counter {
-  font-size: 1.2rem;
   font-weight: bold;
-  min-width: 60px;
-  text-align: center;
 }
 
-/* Demo Button */
-.btn-demo {
+.btn-nav:hover { background: rgba(255,255,255,0.1); }
+.btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.btn-action {
   background: linear-gradient(to right, var(--primary), var(--secondary));
-  color: white;
-  padding: 1rem 2.5rem;
+  padding: 0.8rem 2rem;
   border-radius: 50px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  margin-top: 2rem;
-  transition: transform 0.2s;
+  margin-top: 1.5rem;
 }
+.btn-action:hover { transform: scale(1.05); }
 
-.btn-demo:hover {
-  transform: scale(1.05);
-}
+.counter { font-size: 1.2rem; font-weight: bold; min-width: 60px; text-align: center; }
 
-/* Responsive */
 @media (max-width: 768px) {
-  .flashcards-deck { height: 600px; }
-  h1 { font-size: 2.5rem; }
-  h2 { font-size: 1.8rem; }
-  .flashcard-front, .flashcard-back { padding: 1.5rem; }
+  .slides-deck { height: 600px; }
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+  .slide-card { padding: 1.5rem; }
+  .chart-container { gap: 1rem; height: 150px; }
 }
     </style>
 </head>
@@ -308,177 +345,175 @@ p {
     </div>
 
     <div class="presentation">
-        <div class="flashcards-deck" id="deck">
+        <div class="slides-deck" id="deck">
             
-            <!-- Card 1: Hero -->
-            <div class="flashcard active">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">📊</div>
-                        <h1>Data Analysis Workshop</h1>
-                        <p class="hint">اضغط للقلب 👆</p>
+            <!-- Slide 1: Hero -->
+            <div class="slide-card active">
+                <div class="icon-large">📊</div>
+                <h1>Data Analysis Workshop</h1>
+                <h2>تحويل البيانات إلى قرارات ذكية</h2>
+                <p>كيف نستفيد من لغة الأرقام في قطاع بناء القدرات والمسابقات؟</p>
+                <p class="hint">اضغط (التالي) أو مسطرة لوحة المفاتيح (Space) للبدء!</p>
+            </div>
+
+            <!-- Slide 2: Glossary -->
+            <div class="slide-card">
+                <div class="icon-large">📖</div>
+                <h2>قاموس صغير لتفهم الباقي (Glossary)</h2>
+                <p>اضغط على أي مصطلح لمعرفة معناه ببساطة:</p>
+                <div class="glossary-container">
+                    <div class="glossary-term" onclick="showDef('def-dataset', this)">Dataset (داتا سيت)</div>
+                    <div class="glossary-term" onclick="showDef('def-dashboard', this)">Dashboard (داشبورد)</div>
+                    <div class="glossary-term" onclick="showDef('def-insight', this)">Insight (إنسيَط)</div>
+                </div>
+                <div id="def-dataset" class="glossary-def">الجدول المليء بالبيانات الخام والإجابات التي نجمعها من استمارات التسجيل.</div>
+                <div id="def-dashboard" class="glossary-def">لوحة تحكم مرئية تحوي رسومات بيانية ملونة تلخص لك الـ Dataset في لمحة بصر.</div>
+                <div id="def-insight" class="glossary-def">المعلومة القيمة أو السر الذي نكتشفه بعد قراءة البيانات (مثل: المتدربين يشاركون أكثر في الإجازات).</div>
+            </div>
+
+            <!-- Slide 3: The Why -->
+            <div class="slide-card">
+                <div class="icon-large">❓</div>
+                <h2>ما هو تحليل البيانات؟</h2>
+                <ul class="points-list">
+                    <li class="step-item"><strong>📊 تجميع الحقائق:</strong> فهم الوضع بالأرقام وليس بالتوقعات.</li>
+                    <li class="step-item"><strong>🔍 اكتشاف الأنماط:</strong> معرفة من أين يأتي أفضل المشاركين.</li>
+                    <li class="step-item"><strong>💡 اتخاذ القرارات:</strong> توجيه الميزانية للمكان الصحيح.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 4: Impact -->
+            <div class="slide-card">
+                <div class="icon-large">🌍</div>
+                <h2>أمثلة من أرض الواقع</h2>
+                <ul class="points-list">
+                    <li class="step-item"><strong>🎬 Netflix:</strong> استخدام البيانات لمعرفة تفضيلات المشاهدين بدقة لإنتاج مسلسلات ناجحة مضمونة.</li>
+                    <li class="step-item"><strong>🏆 برامجنا ومسابقاتنا:</strong> اكتشاف أن 70% من المشاريع الفائزة تأتي من جامعة محددة لتركيز حملاتنا التسويقية عليها وتوفير الميزانية!</li>
+                </ul>
+            </div>
+
+            <!-- Slide 5: Interactive Quiz -->
+            <div class="slide-card">
+                <div class="icon-large">📈</div>
+                <h2>سؤال تفاعلي: خمن ثم تحقق!</h2>
+                <p>أي من هذه الجامعات كانت درجات فرقها هي الأعلى العام الماضي؟</p>
+                <div class="chart-container">
+                    <div class="chart-col">
+                        <div class="chart-bar" id="bar1"><div class="chart-val">72%</div></div>
+                        <div class="chart-label">جامعة A</div>
                     </div>
-                    <div class="flashcard-back">
-                        <h2>تحويل البيانات إلى قرارات ذكية</h2>
-                        <p>كيف نستفيد من لغة الأرقام في قطاع بناء القدرات والمسابقات (Capacity Building & Competitions)؟</p>
+                    <div class="chart-col">
+                        <div class="chart-bar" id="bar2"><div class="chart-val">95%</div></div>
+                        <div class="chart-label">جامعة B</div>
                     </div>
+                    <div class="chart-col">
+                        <div class="chart-bar" id="bar3"><div class="chart-val">60%</div></div>
+                        <div class="chart-label">جامعة C</div>
+                    </div>
+                </div>
+                <button class="btn-action" onclick="revealChart()">كشف النتيجة السحرية 🪄</button>
+            </div>
+
+            <!-- Slide 6: Journey -->
+            <div class="slide-card">
+                <div class="icon-large">🛤️</div>
+                <h2>رحلة البيانات (Data Journey)</h2>
+                <div class="journey-steps">
+                    <div class="step step-item"><span>1</span> 📝 Collection (التجميع) - النماذج والمقابلات</div>
+                    <div class="step step-item"><span>2</span> 🧹 Cleaning (التنظيف) - مسح التكرار وتوحيد الأسماء</div>
+                    <div class="step step-item"><span>3</span> 📈 Visualization (التصوير) - الداشبورد المريحة للعين</div>
                 </div>
             </div>
 
-            <!-- Card 2: The Why -->
-            <div class="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">❓</div>
-                        <h2>ما هو تحليل البيانات؟</h2>
-                        <p class="hint">اضغط للإجابة 👆</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <ul class="points-list">
-                            <li><strong>📊 تجميع الحقائق:</strong> فهم الوضع بالأرقام وليس بالتوقعات.</li>
-                            <li><strong>🔍 اكتشاف الأنماط:</strong> معرفة من أين يأتي أفضل المشاركين.</li>
-                            <li><strong>💡 اتخاذ القرارات:</strong> توجيه الميزانية للمكان الصحيح.</li>
-                        </ul>
-                    </div>
-                </div>
+            <!-- Slide 7: Data vs Intuition -->
+            <div class="slide-card">
+                <div class="icon-large">🤔</div>
+                <h2>البيانات مقابل الحدس (الخبرة)</h2>
+                <ul class="points-list">
+                    <li class="step-item"><strong>الحدس (Gut Feeling):</strong> "أعتقد أن الشباب يفضلون المسار التقني أكثر." (مبني على رأي شخصي).</li>
+                    <li class="step-item"><strong>البيانات (Data):</strong> "الأرقام تقول إن التقديم على مسار الأعمال كان أعلى بـ 60%." (حقيقة مدعومة بدليل).</li>
+                    <li class="step-item"><strong>الخلاصة:</strong> خبرتك كمدير مشروع ضرورية جداً، لكن البيانات هي التي توجه هذه الخبرة للطريق الصحيح!</li>
+                </ul>
             </div>
 
-            <!-- Card 3: Impact -->
-            <div class="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">🌍</div>
-                        <h2>أمثلة من أرض الواقع</h2>
-                        <p class="hint">اضغط لترى التأثير 👆</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <ul class="points-list">
-                            <li><strong>🎬 Netflix:</strong> استخدام البيانات لمعرفة تفضيلات المشاهدين وإنتاج مسلسلات ناجحة.</li>
-                            <li><strong>🏆 برامجنا:</strong> اكتشاف أن 70% من المشاريع الفائزة تأتي من جامعة محددة لتركيز التسويق عليها.</li>
-                        </ul>
-                    </div>
-                </div>
+            <!-- Slide 8: Data Sources -->
+            <div class="slide-card">
+                <div class="icon-large">📂</div>
+                <h2>من أين نحصل على بياناتنا اليومية؟</h2>
+                <ul class="points-list">
+                    <li class="step-item"><strong>📝 استمارات التقديم:</strong> (Google Forms, Typeform). الكنز الأول.</li>
+                    <li class="step-item"><strong>📊 منصات التقييم:</strong> منصات تصحيح لجان التحكيم ودرجات المقابلات الشخصية.</li>
+                    <li class="step-item"><strong>💬 التغذية الراجعة (Feedback):</strong> استبيانات ما بعد الورش والتدريبات.</li>
+                    <li class="step-item"><strong>📱 منصات التواصل المحترفة:</strong> احصائيات التفاعل ونسب النقر (Click-rate) للإعلانات.</li>
+                </ul>
             </div>
 
-            <!-- Card 4: Journey -->
-            <div class="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">🛤️</div>
-                        <h2>رحلة البيانات (Data Journey)</h2>
-                        <p class="hint">اضغط لمعرفة الخطوات 👆</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <div class="journey-steps">
-                            <div class="step"><span>1</span> 📝 Collection (التجميع)</div>
-                            <div class="step"><span>2</span> 🧹 Cleaning (التنظيف)</div>
-                            <div class="step"><span>3</span> 📈 Visualization (التصوير)</div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Slide 9: KPIs -->
+            <div class="slide-card">
+                <div class="icon-large">🎯</div>
+                <h2>أهم المؤشرات (KPIs) لمسابقاتنا وبرامجنا</h2>
+                <ul class="points-list">
+                    <li class="step-item"><strong>معدل الإكمال (Completion Rate):</strong> كم شخص بدأ بملء استمارة التسجيل في المسابقة وأكملها للنهاية؟</li>
+                    <li class="step-item"><strong>التنوع (Diversity Quotient):</strong> التوزيع الجغرافي للمشاركين والنسبة بين الذكور والإناث في الفرق.</li>
+                    <li class="step-item"><strong>الجودة (Quality of Entries):</strong> متوسط تقييم لجان التحكيم للمشاريع في المرحلة الأولى.</li>
+                </ul>
             </div>
 
-            <!-- Card 5 (Added): Data vs Intuition -->
-            <div class="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">🤔</div>
-                        <h2>البيانات مقابل الحدس (الخبرة)</h2>
-                        <p class="hint">اضغط لتعرف الفرق 👆</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <ul class="points-list">
-                            <li><strong>الحدس (Gut Feeling):</strong> "أعتقد أن الشباب يفضلون المسار التقني." (قد يصيب أو يخطئ)</li>
-                            <li><strong>البيانات (Data):</strong> "الأرقام تقول إن 60% سجلوا في مسار ريادة الأعمال." (حقيقة ثابتة)</li>
-                            <li><strong>الخلاصة:</strong> الخبرة مهمة، لكن البيانات تؤكدها وتوجهها!</li>
-                        </ul>
-                    </div>
-                </div>
+            <!-- Slide 10: Video -->
+            <div class="slide-card">
+                <div class="icon-large">⚠️</div>
+                <h2>أخطاء شائعة في التعامل مع البيانات مدمرة للنتائج</h2>
+                <video controls width="100%" style="max-width: 600px; border-radius: 12px; margin-top: 1rem; border: 2px solid var(--glass-border);">
+                    <source src="Voda.mp4" type="video/mp4">
+                    متصفحك لا يدعم عرض الفيديو.
+                </video>
             </div>
 
-            <!-- Card 6 (Added): Data Sources -->
-            <div class="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">📂</div>
-                        <h2>من أين نحصل على البيانات؟</h2>
-                        <p class="hint">اضغط لاكتشاف المصادر 👆</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <ul class="points-list">
-                            <li><strong>📝 استمارات التسجيل:</strong> (Google Forms, Typeform).</li>
-                            <li><strong>📊 منصات التقييم:</strong> درجات لجان التحكيم وتقييم المتدربين.</li>
-                            <li><strong>💬 التغذية الراجعة (Feedback):</strong> استبيانات ما بعد الورش والمسابقات.</li>
-                            <li><strong>📱 السوشيال ميديا:</strong> تفاعل الجمهور مع الإعلانات.</li>
-                        </ul>
-                    </div>
-                </div>
+            <!-- Slide 11: Common Mistakes -->
+            <div class="slide-card">
+                <div class="icon-large">⚠️</div>
+                <h2>أخطاء شائعة في التعامل مع البيانات مدمرة للنتائج</h2>
+                <ul class="points-list">
+                    <li class="step-item"><strong>الجمع العشوائي:</strong> سؤال المشاركين عن معلومات لن نستخدمها أبداً (يطيل الاستمارة ويقلل المشاركة).</li>
+                    <li class="step-item"><strong>إهمال التنظيف:</strong> ترك بيانات مكررة يدوياً (كطالب سجل مرتين) يضخم الأرقام النهائية.</li>
+                    <li class="step-item"><strong>الانحياز التأكيدي (Confirmation Bias):</strong> البحث عن الإحصائية التي تدعم قرارك وتجاهل الإحصائية التي تعارضه!</li>
+                </ul>
             </div>
 
-            <!-- Card 7 (Added): KPIs -->
-            <div class="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">🎯</div>
-                        <h2>أهم المؤشرات (KPIs) في مسابقاتنا</h2>
-                        <p class="hint">اضغط لترى الأمثلة 👆</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <ul class="points-list">
-                            <li><strong>معدل الإكمال (Completion Rate):</strong> كم شخص بدأ التقديم وأكمله للنهاية؟</li>
-                            <li><strong>التنوع (Diversity):</strong> التوزيع الجغرافي والنوعي (بنين/بنات) للمشاركين.</li>
-                            <li><strong>الجودة (Quality):</strong> متوسط درجات المشاريع المقبولة.</li>
-                        </ul>
-                    </div>
-                </div>
+            <!-- Slide 12: Demo -->
+            <div class="slide-card">
+                <div class="icon-large">🪄</div>
+                <h2>تطبيق عملي: Looker Studio</h2>
+                <p>سنرى الآن كيف نجيب على الأسئلة المعقدة في ثوانٍ باستخدام البيانات الحقيقية لمسابقاتنا.</p>
+                <button class="btn-action" onclick="alert('في هذه اللحظة، افتح نافذة Looker Studio وابدأ الديمو الحي!')">🚀 الانتقال للوحة التحكم</button>
             </div>
 
-            <!-- Card 8 (Added): Common Mistakes -->
-            <div class="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">⚠️</div>
-                        <h2>أخطاء شائعة في التعامل مع البيانات</h2>
-                        <p class="hint">اضغط للحذر منها 👆</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <ul class="points-list">
-                            <li><strong>الجمع بدون هدف:</strong> تجميع أسئلة في الفورم لا نستخدم إجاباتها.</li>
-                            <li><strong>إهمال التنظيف:</strong> ترك بيانات مكررة أو خاطئة تفسد النتائج.</li>
-                            <li><strong>التحيز (Bias):</strong> البحث عن البيانات التي تثبت رأيك فقط وتجاهل الباقي!</li>
-                        </ul>
-                    </div>
-                </div>
+            <!-- Slide 13: Privacy -->
+            <div class="slide-card">
+                <div class="icon-large">🛡️</div>
+                <h2>أمان وخصوصية بيانات المشاركين</h2>
+                <ul class="points-list">
+                    <li class="step-item">البيانات أمانة.</li>
+                    <li class="step-item">لا تشارك معلومات المشتركين (كالإيميل أو أفكار المشاريع) خارج نطاق فريق العمل المعني.</li>
+                    <li class="step-item">شارك فقط "النتائج والإحصائيات العامة" (Aggregated Data) في التقارير الخارجية أو الشركاء.</li>
+                </ul>
             </div>
 
-            <!-- Card 9: Demo -->
-            <div class="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">🪄</div>
-                        <h2>سحر لوحات التحكم (Live Demo)</h2>
-                        <p class="hint">اضغط للبدء 👆</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <h2>تطبيق عملي: Looker Studio</h2>
-                        <p>الإجابة على أصعب الأسئلة في ثوانٍ باستخدام البيانات الحقيقية لمسابقاتنا.</p>
-                        <button class="btn-demo" id="demoBtn">🚀 إطلاق لوحة التحكم</button>
-                    </div>
-                </div>
+            <!-- Slide 14: Conclusion -->
+            <div class="slide-card">
+                <div class="icon-large">🧠</div>
+                <h2>الخلاصة (The Mindset)</h2>
+                <p>ليس المطلوب منك أن تصبح متحدثاً بلغة الآلة، بل المطلوب منك دائماً أن تسأل:</p>
+                <div style="font-size: 3rem; font-weight: 900; margin: 2rem 0; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">"What does the data say?"</div>
             </div>
 
-            <!-- Card 6: Conclusion -->
-            <div class="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <div class="icon-large">🧠</div>
-                        <h2>The Mindset (الخلاصة)</h2>
-                        <p class="hint">اضغط لترسيخ القاعدة 👆</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <p>ليس المطلوب أن تصبح مبرمجاً، بل أن تسأل نفسك دائماً:</p>
-                        <h1 class="highlight">"What does the data say?"</h1>
-                        <p>أسئلة ومناقشة (Q&A)</p>
+            <!-- Slide 15 (New): Thank You -->
+            <div class="slide-card">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; width: 100%;">
+                    <img src="end.jpg" alt="End" style="max-width: 350px; width: 100%; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); object-fit: cover; border: 4px solid var(--glass-border);">
+                    <div style="text-align: right; direction: ltr;">
+                        <h1 style="font-size: 5rem; margin-bottom: 0.5rem; text-shadow: 0 10px 20px rgba(0,0,0,0.5);">Thank You</h1>
+                        <h2 style="border: none; margin: 0; color: var(--secondary); font-size: 2.5rem; text-align: left; text-shadow: 0 5px 10px rgba(0,0,0,0.5);" dir="rtl">شكراً لوقتكم! 🙏</h2>
                     </div>
                 </div>
             </div>
@@ -488,104 +523,110 @@ p {
         <!-- Controls -->
         <div class="controls">
             <button class="btn-nav" id="prevBtn">السابق ◀</button>
-            <div class="counter" id="counter">1 / 10</div>
-            <button class="btn-nav" id="nextBtn">▶ التالي</button>
+            <div class="counter" id="counter">1 / 15</div>
+            <button class="btn-nav" id="nextBtn" title="اضغط المسطرة Space للتقدم">▶ التالي (أو Space)</button>
         </div>
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.flashcard');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const counter = document.getElementById('counter');
-    const demoBtn = document.getElementById('demoBtn');
+        const cards = document.querySelectorAll('.slide-card');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const counter = document.getElementById('counter');
 
-    let currentIndex = 0;
+        let currentIndex = 0;
 
-    function updateDeck() {
-        cards.forEach((card, index) => {
-            // Remove all classes
-            card.classList.remove('active', 'prev');
-            
-            if (index === currentIndex) {
-                card.classList.add('active');
-            } else if (index < currentIndex) {
-                card.classList.add('prev');
-            }
-            
-            // Unflip cards when navigating away
-            if (index !== currentIndex) {
-                card.classList.remove('is-flipped');
-            }
-        });
-
-        // Update Counter
-        counter.textContent = `${currentIndex + 1} / ${cards.length}`;
-
-        // Disable/Enable buttons
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex === cards.length - 1;
-    }
-
-    // Next / Prev button event listeners
-    nextBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (currentIndex < cards.length - 1) {
-            currentIndex++;
-            updateDeck();
+        function updateDeck() {
+            cards.forEach((card, index) => {
+                card.classList.remove('active', 'prev');
+                if (index === currentIndex) {
+                    card.classList.add('active');
+                } else if (index < currentIndex) {
+                    card.classList.add('prev');
+                }
+            });
+            counter.textContent = `${currentIndex + 1} / ${cards.length}`;
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === cards.length - 1;
         }
-    });
 
-    prevBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateDeck();
-        }
-    });
-
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft' && document.dir === 'rtl') {
-            // Next for rtl
-            if (currentIndex < cards.length - 1) {
+        // Action for Next (Handles staggered steps first, then advances slide)
+        function goNext() {
+            const activeSlide = cards[currentIndex];
+            const hiddenSteps = activeSlide.querySelectorAll('.step-item:not(.visible)');
+            
+            if (hiddenSteps.length > 0) {
+                // Reveal the next step in the current slide
+                hiddenSteps[0].classList.add('visible');
+            } else if (currentIndex < cards.length - 1) {
+                // All steps are visible, move to next slide
                 currentIndex++;
                 updateDeck();
+                
+                // Pause video if moving away
+                const prevVideo = cards[currentIndex-1]?.querySelector('video');
+                if(prevVideo) prevVideo.pause();
             }
-        } else if (e.key === 'ArrowRight' && document.dir === 'rtl') {
-            // Prev for rtl
+        }
+
+        function goPrev() {
             if (currentIndex > 0) {
+                // Pause video if moving away
+                const currentVideo = cards[currentIndex]?.querySelector('video');
+                if(currentVideo) currentVideo.pause();
+                
                 currentIndex--;
                 updateDeck();
+                // When going backward, auto-reveal all steps of the past slide so the user doesn't have to re-click
+                const previousSlide = cards[currentIndex];
+                previousSlide.querySelectorAll('.step-item').forEach(el => el.classList.add('visible'));
+                
+                // Reset chart animation if we go back to chart slide
+                document.getElementById('bar1').style.height = '0%';
+                document.getElementById('bar2').style.height = '0%';
+                document.getElementById('bar3').style.height = '0%';
+                document.querySelectorAll('.chart-bar').forEach(b => b.classList.remove('grown'));
             }
         }
-        
-        // Support spacebar for flipping
-        if (e.key === ' ' || e.key === 'Spacebar') {
-            cards[currentIndex].classList.toggle('is-flipped');
-        }
-    });
 
-    // Flip card on click
-    cards.forEach(card => {
-        const inner = card.querySelector('.flashcard-inner');
-        inner.addEventListener('click', () => {
-            card.classList.toggle('is-flipped');
+        nextBtn.addEventListener('click', goNext);
+        prevBtn.addEventListener('click', goPrev);
+
+        document.addEventListener('keydown', (e) => {
+            // Spacebar advances through staggered steps OR slides
+            if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'ArrowLeft' && document.dir === 'rtl') {
+                e.preventDefault();
+                goNext();
+            } 
+            else if (e.key === 'ArrowRight' && document.dir === 'rtl') {
+                e.preventDefault();
+                goPrev();
+            }
         });
-    });
 
-    // Demo Button
-    if(demoBtn) {
-        demoBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // prevent card flip
-            alert('فتح الموود العملي: Looker Studio!');
-        });
-    }
+        // Glossary Logic
+        window.showDef = function(id, el) {
+            // Hide all
+            document.querySelectorAll('.glossary-def').forEach(def => def.classList.remove('show'));
+            document.querySelectorAll('.glossary-term').forEach(term => term.classList.remove('active-term'));
+            
+            // Show chosen
+            document.getElementById(id).classList.add('show');
+            el.classList.add('active-term');
+        };
 
-    // Initialize
-    updateDeck();
-});
+        // Chart Reveal Logic
+        window.revealChart = function() {
+            const b1 = document.getElementById('bar1');
+            const b2 = document.getElementById('bar2');
+            const b3 = document.getElementById('bar3');
+            b1.style.height = '65%'; b1.classList.add('grown');
+            b2.style.height = '95%'; b2.classList.add('grown');
+            b3.style.height = '40%'; b3.classList.add('grown');
+        };
+
+        // Initialize
+        updateDeck();
     </script>
 </body>
 </html>
